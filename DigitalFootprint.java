@@ -15,21 +15,21 @@ import java.util.regex.Pattern;
  
 public class DigitalFootprint {
  
-    // ---------- 1. DATA ----------
+    //1. DATA 
    
     record Finding(String source, String type, String detail, String link) {}
  
     static final Map<String, Integer> WEIGHTS = Map.of("PUBLIC_PROFILE", 10, "EXPOSED_DATA", 8);
  
   
-    static final String[][] SITES = {
-        {"GitHub", "https://github.com/"},
-        {"GitLab", "https://gitlab.com/"},
-        {"Reddit", "https://www.reddit.com/user/"},
-        {"Dev.to", "https://dev.to/"},
-        {"Medium", "https://medium.com/@"}
-    };
- 
+   static final String[][] SITES = {
+    {"GitHub", "https://github.com/"},
+    {"GitLab", "https://gitlab.com/"},
+    {"Reddit", "https://www.reddit.com/user/"},
+    {"Pinterest", "https://www.pinterest.com/"},
+    {"X (Twitter)", "https://x.com/"},
+    {"Instagram", "https://www.instagram.com/"}
+};
     static final HttpClient client = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.NORMAL)
             .connectTimeout(Duration.ofSeconds(8)).build();
@@ -37,7 +37,7 @@ public class DigitalFootprint {
     static List<Finding> findings = new ArrayList<>();
     static String lastUser = "";
  
-    // ---------- 2. MENU ----------
+    //2. MENU
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.println("=== Digital Footprint Visualizer ===");
@@ -60,7 +60,7 @@ public class DigitalFootprint {
         }
     }
  
-    // ---------- 3. SCAN: consent, validation, then collect ----------
+    // 3. SCAN: consent, validation, then collect
     static void scan(Scanner in) {
         System.out.println("\nThis tool only checks PUBLIC information, for YOUR OWN accounts.");
         System.out.print("Type YES to confirm your consent: ");
@@ -82,7 +82,7 @@ public class DigitalFootprint {
         showResults();
     }
  
-    // ---------- 4. COLLECTORS ----------
+    // 4. COLLECTORS 
     static HttpResponse<String> fetch(String url) throws Exception {
         HttpRequest req = HttpRequest.newBuilder(URI.create(url))
                 .timeout(Duration.ofSeconds(8))
@@ -132,7 +132,7 @@ public class DigitalFootprint {
         return (m.find() && !m.group(1).isBlank()) ? m.group(1) : null;
     }
  
-    // ---------- 5. SCORING, CHART AND RECOMMENDATIONS ----------
+    // 5. SCORING, CHART AND RECOMMENDATIONS
     static String risk(Finding f) {
         return f.type().equals("EXPOSED_DATA") ? "Medium" : "Low";
     }
@@ -170,7 +170,7 @@ public class DigitalFootprint {
         if (profiles + exposed == 0) System.out.println("  - No public exposure found in the checked sources. Re-scan regularly.");
     }
  
-    // ---------- 6. EXPORT AND PRIVACY CONTROL ----------
+    // 6. EXPORT AND PRIVACY CONTROL
     static void export(Scanner in) {
         if (findings.isEmpty()) {
             System.out.println("Nothing to export.");
